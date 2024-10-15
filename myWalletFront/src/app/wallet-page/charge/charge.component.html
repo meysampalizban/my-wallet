@@ -1,0 +1,57 @@
+<app-wallet-page></app-wallet-page>
+
+<div class="container mx-auto my-auto ">
+    <div class="grid justify-items-center content-center place-items-center ">
+        <div
+            class="w-5/12 bg-white border  iransans text-lg leading-3 my-2 py-4  text-center border-gray-300 rounded-lg  shadow-lg dark:bg-gray-800 dark:border-gray-700  justify-center items-center ">
+            <h1> شارژ کیف پول</h1>
+            <form class="text-right px-2 py-2" dir="rtl" (ngSubmit)="chargeSubmit()">
+                <div class="relative my-3 mx-3">
+                    <label for="listAccounts" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        لیست حساب ها
+                    </label>
+                    <select id="listAccounts" [formControl]="fromAccount"
+                        class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option *ngFor="let account of listAccounts; index as i" [ngValue]="account">{{
+                            account.accNumber }}</option>
+
+                    </select>
+                </div>
+
+                <div class="relative m-3">
+                    <input type="text" name="amount" id="amount" [formControl]="amount"
+                        class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        placeholder="" />
+                    <label for="amount" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                    transform -translate-y-6 scale-75 top-3 -z-0 origin-[0] peer-placeholder-shown:start-6 
+                    peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                    peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                    peer-focus:-translate-y-6  rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                        مبلغ جهت شارژ کیف پول </label>
+                </div>
+
+                <div class="relative m-3">
+                    <input type="text" name="description" id="description" [formControl]="description"
+                        class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        placeholder="" />
+                    <label for="description" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 
+                    transform -translate-y-6 scale-75 top-3 -z-0 origin-[0] peer-placeholder-shown:start-6 
+                    peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 
+                    peer-placeholder-shown:translate-y-0 peer-focus:scale-75 
+                    peer-focus:-translate-y-6  rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                        توضیحات (اختیاری) </label>
+                </div>
+
+                <div class="w-full flex items-center justify-center m-4">
+                    <button
+                        class="text-white w-3/6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        type="submit">
+                        شارژ
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,52 @@
+<app-wallet-page></app-wallet-page>
+
+<div
+    class="w-full bg-white border  iransans text-lg leading-3 my-5 p-3  text-center border-gray-300 rounded-lg  shadow-lg dark:bg-gray-800 dark:border-gray-700  justify-center items-center ">
+
+    <table class="min-w-full bg-white border border-gray-200" dir="rtl">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="p-1 border-b">ردیف</th>
+                <th class="p-1 border-b">تراکنش</th>
+                <th class="p-1 border-b">مقدار</th>
+                <th class="p-1 border-b">شماره مرجع</th>
+                <th class="p-1 border-b">توضیحات</th>
+                <th class="p-1 border-b">تاریخ و زمان</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let history of arr; index as i;">
+                <tr>
+                    <td>
+                        {{ i +1 }} 
+             
+                    </td>
+                    <td>
+                        <span *ngIf="history.type == 'deposit'">
+                            <fa-icon class="text-green-500" [icon]="faPlus"></fa-icon>
+                            واریز
+                        </span>
+                        <span *ngIf="history.type == 'withdrawal'">
+                            <fa-icon class="text-red-700" [icon]="faMinus"></fa-icon>
+                            برداشت
+                        </span>
+                    </td>
+                    <td>
+                        <p>{{ history.amount | number:'0.0-3' }} ریال</p>
+                    </td>
+                    <td>
+                        <p>{{ history.refNumber }}</p>
+                    </td>
+                    <td>
+                        <p>{{ history.desciption }}</p>
+                    </td>
+                    <td>
+                        <p dir="ltr">{{ history.createdAt | date:"yyyy/MM/dd HH:mm:ss" }}</p>
+                    </td>
+
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>

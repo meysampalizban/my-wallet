@@ -1,0 +1,207 @@
+<div class="container iransans">
+  <div class="grid grid-col-12">
+    <div class="col-span-12 ">
+      <h3 class="text-center after:content-['\»'] before:content-['\«'] iransans text-blue-400">
+        فرم ثبت نام کیف پول من
+      </h3>
+
+      <form class="text-right px-2 py-2" [formGroup]="registerForm" (ngSubmit)="submit(registerForm)" dir="rtl">
+        <div class="flex items-center justify-center">
+          <div class="basis-3/6">
+
+            <!-- first name -->
+            <div class="relative my-2 mx-2">
+              <input type="text" [formControl]="firstName" id="firstName"
+                class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder="" />
+              <label for="firstName"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                نام </label>
+
+              <div *ngIf="firstName.invalid && (firstName?.touched || firstName?.dirty)">
+                <small class="text-red-600" *ngIf="firstName?.errors?.['required']">
+                  نام را وارد کنید
+                </small>
+                <small class="text-red-600" *ngIf="firstName.errors?.['minlength']">
+                  حداقل طول نام باید 3 کاراکتر باشد
+                </small>
+              </div>
+            </div>
+
+            <div class="relative my-2 mx-2">
+
+              <input type="text" [formControl]="lastName" id="lastName"
+                class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder="" />
+              <label for="lastName"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                نام خانوادگی</label>
+              <div
+                *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.dirty && registerForm.get('lastName')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+
+
+            <div class="relative my-2 mx-2">
+              <span class="absolute start-0 bottom-2 text-gray-500 dark:text-gray-400">
+                <fa-icon [icon]="faAtIcon"></fa-icon>
+              </span>
+              <input type="email" [formControl]="email" id="email"
+                class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder="" />
+              <label for="email"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                ایمیل</label>
+
+              <div
+                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.dirty && registerForm.get('email')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+            <div class="relative my-2 mx-2">
+              <span class="absolute start-0 bottom-2 text-gray-500 dark:text-gray-400">
+                <fa-icon [icon]="faPhoneIcon"></fa-icon>
+              </span>
+              <input type="text" [formControl]="phoneNumber" id="phoneNumber"
+                class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder="" />
+              <label for="phoneNumber"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                شماره تماس
+              </label>
+              <div
+                *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.dirty && registerForm.get('phoneNumber')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+
+
+
+
+            <div class="relative my-2 mx-2">
+              <input type="text" [formControl]="nationalCode" id="nationalCode" placeholder=""
+                class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
+              <label for="nationalCode"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                کد ملی
+              </label>
+              <div
+                *ngIf="registerForm.get('nationalCode')?.touched && registerForm.get('nationalCode')?.dirty && registerForm.get('nationalCode')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+            <div class="flex flex-row items-center justify-center">
+
+              <div class="basic1/3">
+                <div class="relative my-2 mx-2">
+                  <label for="year" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    سال
+                  </label>
+                  <select id="year" [formControl]="year"
+                    class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option disabled selected value="">هیچکدام</option>
+                    <option *ngFor="let year of yearCount" value="{{ year }}">{{ year }}</option>
+                  </select>
+                </div>
+              </div>
+
+
+              <div class="basic2/3">
+                <div class="relative my-2 mx-2">
+                  <label for="month" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    ماه
+                  </label>
+                  <select id="month" [formControl]="month"
+                    class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option disabled selected value="">هیچکدام</option>
+                    <option *ngFor="let month of monthCount; let i= index " value="{{ i+1 }}">{{ month }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="basic3/3">
+                <div class="relative my-2 mx-2">
+                  <label for="day" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    روز
+                  </label>
+                  <select id="day" [formControl]="day"
+                    class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option disabled selected value="">هیچکدام</option>
+                    <option *ngFor="let day of dayCount" value="{{ day }}">{{ day }}</option>
+                  </select>
+                </div>
+              </div>
+              <div
+                *ngIf="registerForm.get('year')?.touched && registerForm.get('year')?.dirty && registerForm.get('year')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+              <div
+                *ngIf="registerForm.get('month')?.touched && registerForm.get('month')?.dirty && registerForm.get('month')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+              <div
+                *ngIf="registerForm.get('day')?.touched && registerForm.get('day')?.dirty && registerForm.get('day')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+
+
+
+
+            <div class="relative my-2 mx-2">
+              <label for="sex" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                جنسیت
+              </label>
+              <select id="sex" [formControl]="sex" (change)="ChangeSex($event)"
+                class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected value="">هیچکدام</option>
+                <option value="man">آقا</option>
+                <option value="woman">خانم</option>
+              </select>
+              <div
+                *ngIf="registerForm.get('sex')?.touched && registerForm.get('sex')?.dirty && registerForm.get('sex')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+
+            <div class="relative my-2 mx-2" *ngIf="sexOption">
+              <label for="militaryStatus" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                نظام وظیفه
+              </label>
+              <select id="militaryStatus" [formControl]="militaryStatus"
+                class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected value="none">هیچکدام</option>
+                <option value="hasEndMilitaryCard">کارت پایان خدمت</option>
+                <option value="hasTempMilitary">معافیت موقت </option>
+                <option value="hasPermanentMilitray">معافیت دائم </option>
+              </select>
+              <div
+                *ngIf="registerForm.get('militaryStatus')?.touched && registerForm.get('militaryStatus')?.dirty && registerForm.get('militaryStatus')?.errors?.['required']">
+                نام را وارد کنید
+              </div>
+            </div>
+
+            <!-- [disabled]="registerForm.valid" -->
+            <!--  submit button -->
+            <div class="w-full flex items-center justify-center">
+              <button
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                type="submit" [ngStyle]="{'opacity':registerForm.valid ? '1' : '0.5'}">
+                ثبت نام
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
