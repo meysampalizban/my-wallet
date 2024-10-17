@@ -1,8 +1,8 @@
 
 
 export interface Response {
-    timestamp: Date,
     statusCode: number,
     statusType: string,
-    messages: Record<string, any>;
+    messages: Map<string, Array<any>>;
+    timestamp: Date,
 }

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { ServerService } from '../../server.service';
+import { ServerService } from '../../service/server.service';
 import { User } from '../../dto/user';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
+import { ComponentService } from '../../service/component.service';
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -16,16 +17,12 @@ export class HeaderComponent {
   public user: User | undefined;
   private userId: number;
 
-  constructor(private service: ServerService) {
-    const user = localStorage.getItem("userId");
-    let userId: string = user == null ? "" : user.toString();
-    this.userId = parseInt(userId);
+  constructor(private service: ServerService, private componentService: ComponentService) {
+    this.userId = componentService.getUserIdLocalStorage();
   }
 
   ngOnInit(): void {
-    this.service.getUserData(this.userId).subscribe(res => {
-      this.user = res
-    })
+    this.user = this.service.getUserData(this.userId);
   }
 
 }

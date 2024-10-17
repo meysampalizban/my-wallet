@@ -3,7 +3,9 @@ package ir.mywallet.controller;
 
 import ir.mywallet.dto.Responses;
 import ir.mywallet.model.Account;
+import ir.mywallet.model.User;
 import ir.mywallet.services.AccountService;
+import ir.mywallet.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.*;
@@ -22,49 +25,41 @@ import java.util.*;
 
 @WebMvcTest
 public class AccountControllerTest {
+
 	@Autowired
 	private MockMvc mockMvc;
-
-	@Mock
-	private AccountService accountService;
-
-	@InjectMocks
-	private AccountController accountController;
-
-	private Account account;
-
+	
+	@MockBean
+	private UserService userService;
+	
 	@BeforeEach
-	public void setUp(){
-		MockitoAnnotations.openMocks(this);
-		account = new Account();
-		account.setId(5446);
-		account.setAccBalance(20L);
-		account.setAccNumber("1561615");
-		account.setShabaNumber("456465165165");
+	public void setup(){
+		User user=new User();
+		user.setId(1);
+		user.setEmail("meisam");
 	}
-
-
+	
 	@Test
-	public void testCreateAccount() throws Exception {
+	public void saveEmployeeTest() throws Exception{
+//		given(employeeService.saveEmployee(any(Employee.class))).willReturn(employee);
+		
 
+		
 
-		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		res.setStatusType("success");
-		res.setStatusCode(201);
-		res.setTimestamp(new Date());
-		msg.put("success",new ArrayList<>(List.of("افتتاح حساب با موفقیت انجام شد")));
-		res.setMessages(msg);
+//		ResultActions response = mockMvc.perform(post("/api/employees")
+//				.contentType(MediaType.APPLICATION_JSON)
+//				.content(objectMapper.writeValueAsString(employee)));
 
-		when(accountService.createAccount(any(Account.class))).thenReturn(res);
-
-
-		mockMvc.perform(post("/createaccount")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"accNumber\":\"6034477961\", \"shabaNumber\":\"9546477465456465\",\"accBalance\": 25555,\"user\":{ \"id\": 4 } }"))
-				.andExpect(status().isCreated());
-
+//		response.andDo(print()).
+//				andExpect(status().isCreated())
+//				.andExpect(jsonPath("$.firstName",
+//						is(employee.getFirstName())))
+//				.andExpect(jsonPath("$.lastName",
+//						is(employee.getLastName())))
+//				.andExpect(jsonPath("$.email",
+//						is(employee.getEmail())));
 	}
+	
 
 
 

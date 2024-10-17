@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletPageComponent } from '../wallet-page.component';
-import { ServerService } from '../../server.service';
+import { ServerService } from '../../service/server.service';
 import { Deposit } from '../../dto/deposit';
 import { Withdrawal } from '../../dto/withdrawal';
 import { History } from './history';

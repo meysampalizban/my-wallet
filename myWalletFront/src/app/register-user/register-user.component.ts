@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { ServerService } from "../server.service";
+import { ServerService } from "../service/server.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faAt } from "@fortawesome/free-solid-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
@@ -32,6 +32,7 @@ export class RegisterUserComponent implements OnInit {
   faPhoneIcon = faPhone;
   registerForm !: FormGroup;
   sexOption: boolean = false;
+
   yearCount: number[] = [];
   monthCount: string[] = [
     "فروردین",
@@ -49,29 +50,39 @@ export class RegisterUserComponent implements OnInit {
   ];
   dayCount: number[] = [];
 
-  firstName = new FormControl("", [Validators.required, Validators.minLength(3)]);
-  lastName = new FormControl("", [Validators.required]);
-  email = new FormControl("", [Validators.required, Validators.email]);
-  phoneNumber = new FormControl(null,[Validators.required, Validators.maxLength(11), Validators.pattern("[09][0-9]{10}")]);
-  nationalCode = new FormControl(null,[Validators.required, Validators.maxLength(10), Validators.pattern("[0-9]{10}")]);
-  year = new FormControl(null,[Validators.required]);
-  month = new FormControl(null,[Validators.required]);
-  day = new FormControl(null,[Validators.required]);
-  sex = new FormControl("", [Validators.required]);
-  militaryStatus = new FormControl("none");
 
 
   constructor(
     private form: FormBuilder,
     private service: ServerService,
     private router: Router,
-    private title: Title
   ) {
+    let title = inject(Title);
     title.setTitle("ثبت نام");
     this.yearCount = Array.from({ length: 103 }, (_, index) => index + 1300);
     this.dayCount = Array.from({ length: 31 }, (_, index) => index + 1);
   }
 
+
+  firstName = new FormControl("", [Validators.required, Validators.maxLength(40)]);
+
+  lastName = new FormControl("", [Validators.required, Validators.maxLength(60)]);
+
+  email = new FormControl("", [Validators.required, Validators.email, Validators.maxLength(90)]);
+
+  phoneNumber = new FormControl("", [Validators.required, Validators.pattern("^09[0-9]{10}$")]);
+
+  nationalCode = new FormControl("", [Validators.required, Validators.pattern("^[0-9]{10}$")]);
+
+  year = new FormControl("", [Validators.required]);
+
+  month = new FormControl("", [Validators.required]);
+
+  day = new FormControl("", [Validators.required]);
+
+  sex = new FormControl("", [Validators.required]);
+
+  militaryStatus = new FormControl("");
 
   ngOnInit(): void {
     this.registerForm = this.form.group({
@@ -88,40 +99,75 @@ export class RegisterUserComponent implements OnInit {
     })
   }
 
-  submit(value: any) {
+  registerSubmit(value: any) {
+    // if (value.valid) {
+    let birthDate = "";
+    let year = value.get('year').value;
+    let month = value.get('month').value;
+    let day = value.get('day').value;
+    // birthDate = year + '-' + month + '-' + day;
 
-    if (this.registerForm.valid) {
-      let year = value.get('year').value;
-      let month = value.get('month').value;
-      let day = value.get('day').value;
-      let birthDate = year + '-' + month + '-' + day;
+    let register: Register = {
+      "firstName": value.get("firstName").value,
+      "lastName": value.get("lastName").value,
+      "email": value.get("email").value,
+      "phoneNumber": value.get("phoneNumber").value,
+      "nationalCode": value.get("nationalCode").value,
+      "birthDate": birthDate,
+      "sex": value.get("sex").value,
+      "militaryStatus": value.get("militaryStatus").value
+    };
 
-      let register: Register = {
-        "firstName": value.get("firstName").value,
-        "lastName": value.get("lastName").value,
-        "email": value.get("email").value,
-        "phoneNumber": value.get("phoneNumber").value,
-        "nationalCode": value.get("nationalCode").value,
-        "birthDate": birthDate,
-        "sex": value.get("sex").value,
-        "militaryStatus": value.get("militaryStatus").value
-      };
 
-      console.log(register);
-
-      this.service.createUser(register).subscribe(res => {
-        if (res.statusCode == 201) {
-          Swal.fire({
-            title: "موفق",
-            text: `"${res.messages?.['success']}"`,
-            icon: 'success',
-            confirmButtonText: 'تمام'
-          });
-          localStorage.setItem("userId", res.messages?.['userId']);
-          this.router.navigate(["/wallet"]);
-        }
+    this.service.createUser(register).subscribe({
+      next: (res) => { res }, error:(err) => {
+      let s: Array<any> = Object.entries(err.messages).map(([key, data]) => {
+        return data;
       });
-    }
+      
+      let t: string = "";
+      s.map((e) => {
+        t += e + ".";
+      })
+
+      Swal.fire({
+        title: "ناموفق",
+        text: t,
+        icon: 'error',
+        confirmButtonText: 'تمام'
+      });
+
+
+    }});
+
+  
+
+
+    //   this.service.createUser(register).subscribe((res) => {
+    //     if (res.statusCode == 201) {
+    //       Swal.fire({
+    //         title: "موفق",
+
+    //         icon: 'success',
+    //         confirmButtonText: 'تمام'
+    //       });
+    //       // localStorage.setItem("userId", res.messages);
+    //       this.router.navigate(["/wallet"]);
+    //     }
+    //     if (res.statusCode == 400) {
+    //       Swal.fire({
+    //         title: "ناموفق",
+
+    //         icon: 'error',
+    //         confirmButtonText: 'تمام'
+    //       });
+
+    //     }
+    //   }, (err) => {
+    //     console.log(err);
+
+    //   });
+    //   // }
   }
 
   ChangeSex(event: any) {

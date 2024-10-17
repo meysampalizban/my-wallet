@@ -29,7 +29,6 @@ public class Wallet {
 	private Long wBalance;
 	
 	@OneToOne(mappedBy = "wallet")
-	@Valid
 	private User user;
 	
 	

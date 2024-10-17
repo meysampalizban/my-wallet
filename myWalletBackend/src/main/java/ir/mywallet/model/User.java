@@ -3,12 +3,12 @@ package ir.mywallet.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import ir.mywallet.validation.IsExsistEmail;
-import ir.mywallet.validation.IsExsistNationalCode;
-import ir.mywallet.validation.IsExsistPhoneNumber;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,25 +30,33 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name = "email", unique = true, nullable = false)
+	@Column(name = "first_name", length = 50, nullable = false, unique = false)
+	@NotBlank(message = "نام را وارد کنید")
+	@Size(max = 50, message = "طول نام زیاد است")
+	private String firstName;
+	
+	@Column(name = "last_name", length = 70, nullable = false, unique = false)
+	@NotBlank(message = " نام خانوادکی را وارد کنید")
+	@Size(max = 70, message = "نام خانوادگی طول زیاد دارد")
+	private String lastName;
+	
+	@Column(name = "email", length = 101, unique = true, nullable = false)
 	@NotBlank(message = "مقدار ایمیل باید وارد شود")
 	@Email(message = "ایمیل باید به فرمت درست وارد شود")
-	@IsExsistEmail(message = "ایمیل تکراری است")
+	@Size(max = 100, message = "بیشترین طول ایمیل باید 100 کاراکتر باشد")
 	private String email;
 	
 	
 	@NotBlank(message = "شماره تلفن باید وارد شود")
 	@Size(max = 11, message = "بیشترین طول شماره تلفن باید 11 باشد")
-	@Pattern(regexp = "^(0\\d{10}|9\\d{9})$", message = "شماره تلفن را به طرز صحیح وارد کنید")
-	@IsExsistPhoneNumber(message = "شماره تلفن تکراری است")
-	@Column(name = "phone_number", length = 15, unique = true, nullable = false)
+	@Pattern(regexp = "^09[0-9]{10}$", message = "شماره تلفن را به طرز صحیح وارد کنید")
+	@Column(name = "phone_number", length = 14, unique = true, nullable = false)
 	private String phoneNumber;
 	
 	
 	@NotBlank(message = "کد ملی را  باید وارد شود")
 	@Size(max = 10, message = "بیشترین طول کد ملی باید 10 باشد")
-	@Pattern(regexp = "^\\d{10}$", message = "کد ملی را به طرز صحیح وارد کنید")
-	@IsExsistNationalCode(message = "کد ملی تکراری است")
+	@Pattern(regexp = "^[0-9]{10}$", message = "کد ملی را به طرز صحیح وارد کنید")
 	@Column(name = "national_code", unique = true, length = 15, nullable = false)
 	private String nationalCode;
 	
@@ -58,15 +66,6 @@ public class User {
 	@DateTimeFormat(pattern = "yyyy-mm-dd")
 	private Date birthDate;
 	
-	@Column(name = "first_name", length = 50, nullable = false, unique = false)
-	@NotBlank(message = "نام را وارد کنید")
-	@Size(max =  50, message = "طول نام زیاد است")
-	private String firstName;
-	
-	@Column(name = "last_name", length = 70, nullable = false, unique = false)
-	@NotBlank(message = " نام خانوادکی را وارد کنید")
-	@Size(max =  70, message = "نام خانوادگی طول زیاد دارد")
-	private String lastName;
 	
 	@Column(name = "sex", length = 10, nullable = true, unique = false)
 	@NotBlank(message = "جنسیت را وارد کنید")
@@ -74,7 +73,7 @@ public class User {
 	private String sex;
 	
 	@Column(name = "military_status", length = 25, nullable = true, unique = false)
-	@Size(max =  25, message = "طول خدمت سربازی زیاد است")
+	@Size(max = 25, message = "طول خدمت سربازی زیاد است")
 	private String militaryStatus;
 	
 	@JsonManagedReference

@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 
 public class OperationService {
-	Logger logger = LoggerFactory.getLogger(OperationService.class);
+	private final Logger logger = LoggerFactory.getLogger(OperationService.class);
 	@Autowired
 	private WithdrawalService withdrawalService;
 	@Autowired
@@ -29,13 +29,6 @@ public class OperationService {
 	@Autowired
 	private WalletRepo walletRepo;
 	
-	@Autowired
-	private WalletService walletService;
-	@Autowired
-	private UserRepo userRepo;
-	
-	@Autowired
-	private UserService userService;
 	
 	@Transactional
 	public Responses operationCharge(ChargeReq req){
@@ -96,38 +89,12 @@ public class OperationService {
 		return res;
 	}
 	
-	
-	@Transactional
-	public Responses createUser(User req){
-		User user = userService.createUser(req);
-		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		Wallet wallet = new Wallet();
-		wallet.setWBalance(0L);
-		wallet.setUser(user);
-		Wallet createWallet = walletService.createWallet(wallet);
-		userRepo.updateUserById(user.getId(),createWallet.getId());
-		Boolean checkUserIsPresent = userRepo.findById(user.getId()).isPresent();
-		int userId = 0;
-		if(checkUserIsPresent){
-			userId = userRepo.findById(user.getId()).get().getId();
-		}
-		res.setStatusCode(201);
-		res.setStatusType("success");
-		msg.put("success",new ArrayList<>(List.of("با موفقعیت کاربر ساخته شد")));
-		msg.put("userId",new ArrayList<>(List.of(userId)));
-		res.setMessages(msg);
-		res.setTimestamp(new Date());
-		return res;
-	}
-	
-	
 	private String createRefNumber(String accountNumber){
 		Instant instant = Instant.now();
-		Long i = instant.toEpochMilli();
-		Long refNumber = Long.valueOf(accountNumber + i);
-		String ref = refNumber.toString();
+		long i = instant.toEpochMilli();
+		Long refNumber = (Long) Long.valueOf(accountNumber + i);
+		String ref = "";
+		ref = refNumber.toString();
 		return ref;
 	}
-	
 }
