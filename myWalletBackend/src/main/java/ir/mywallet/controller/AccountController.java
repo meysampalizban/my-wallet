@@ -4,8 +4,7 @@ import ir.mywallet.dto.Responses;
 import ir.mywallet.model.Account;
 import ir.mywallet.services.AccountService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,20 +15,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@CrossOrigin("http://localhost:4200")
+@RestController
+@CrossOrigin(origins = "http://localhost:4200",
+		allowCredentials = "true", maxAge = 3000L, methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE},
+		allowedHeaders = {HttpHeaders.AUTHORIZATION,HttpHeaders.ACCEPT,HttpHeaders.CONTENT_TYPE,"userId"})
 @RequestMapping("/api/account")
 public class AccountController {
-	Logger logger = LoggerFactory.getLogger(AccountController.class);
+	
+	private final AccountService accountService;
 	
 	@Autowired
-	private AccountService accountService;
+	public AccountController(AccountService accountService){
+		this.accountService = accountService;
+	}
+	
 	
 	// برای گرفتن اطلاعات حساب های یک کاربر با ایدی کاربر
-	@GetMapping(path = "/getaccounts/{userId}")
-	@ResponseBody
-	public List<Account> getAllAccount(@PathVariable("userId") int userId){
-		
+	@GetMapping(path = "/getaccounts/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Account> getAllAccount(@NotNull @PathVariable("userId") int userId){
 		return accountService.getAccounts(userId);
 	}
 	
@@ -38,17 +41,15 @@ public class AccountController {
 	@ResponseBody
 	public ResponseEntity<Responses> createAccount(@Valid @RequestBody Account account){
 		Responses res = accountService.createAccount(account);
-		
 		return new ResponseEntity<>(res,new HttpHeaders(),HttpStatus.CREATED);
 	}
 	
 	
 	// حذف حساب با ایدی حساب
 	@DeleteMapping(path = "/deleteaccount/{accId}")
-	@ResponseBody
-	public ResponseEntity<Responses> deleteaccount(@PathVariable("accId") int accId){
-		Responses res = accountService.deleteaccount(accId);
-		return new ResponseEntity<>(res,new HttpHeaders(),HttpStatus.CREATED);
+	public ResponseEntity<Responses> deleteaccount(@NotNull @PathVariable("accId") int accId){
+		Responses res = accountService.deleteAccount(accId);
+		return new ResponseEntity<>(res,new HttpHeaders(),HttpStatus.ACCEPTED);
 	}
 	
 }

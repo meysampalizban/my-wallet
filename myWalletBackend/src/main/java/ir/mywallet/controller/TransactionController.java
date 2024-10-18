@@ -9,6 +9,7 @@ import ir.mywallet.services.DepositService;
 import ir.mywallet.services.OperationService;
 import ir.mywallet.services.WithdrawalService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,29 +20,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200",
+		allowCredentials = "true", maxAge = 3000L, methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE},
+		allowedHeaders = {HttpHeaders.AUTHORIZATION,HttpHeaders.ACCEPT,HttpHeaders.CONTENT_TYPE,"userId"})
 @RequestMapping("/api/transaction")
 public class TransactionController {
 	
-	@Autowired
-	private OperationService operationService;
-	@Autowired
-	private DepositService depositService;
+	private final OperationService operationService;
+	private final DepositService depositService;
+	private final WithdrawalService withdrawalService;
 	
 	@Autowired
-	private WithdrawalService withdrawalService;
+	public TransactionController(OperationService operationService,DepositService depositService,WithdrawalService withdrawalService){
+		this.operationService = operationService;
+		this.depositService = depositService;
+		this.withdrawalService = withdrawalService;
+	}
 	
 	// گرفتن لیست برداشت های کیف پول
 	@GetMapping(path = "/getwithdrawalhistory/{walletId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<Withdrawal> getWithdrawalHistory(@PathVariable("walletId") int walletId){
+	public List<Withdrawal> getWithdrawalHistory(@NotNull @PathVariable("walletId") int walletId){
 		return this.withdrawalService.getWithdrawalByWalletId(walletId);
 	}
 	
 	// گرفتن لیست واریز ها به کیف پول
 	@GetMapping(path = "/getdeposithistory/{walletId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<Deposit> getDepositHistory(@PathVariable("walletId") int walletId){
+	public List<Deposit> getDepositHistory(@NotNull @PathVariable("walletId") int walletId){
 		return this.depositService.getDepositByWalletId(walletId);
 	}
 	

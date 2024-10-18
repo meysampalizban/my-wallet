@@ -8,17 +8,25 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepo extends CrudRepository<User,Integer>, JpaRepository<User,Integer> {
 	
 	boolean existsByEmail(String email);
+	
 	boolean existsByPhoneNumber(String phoneNumber);
+	
 	boolean existsByNationalCode(String nationalCode);
 	
-	
+	Optional<User> findByEmail(String email);
 	
 	@Modifying
 	@Query(value = "UPDATE users  SET wallet_id =:wallet_id WHERE id =:id", nativeQuery = true)
-	int updateUserById(@Param(value = "id") int id,@Param(value = "wallet_id") int wallet);
+	void updateWallet(@Param(value = "id") int id,@Param(value = "wallet_id") int wallet);
+	
+	@Modifying
+	@Query(value = "UPDATE users  SET token =:_token WHERE id =:id", nativeQuery = true)
+	void updateToken(@Param(value = "id") int id,@Param(value = "_token") String token);
 	
 }

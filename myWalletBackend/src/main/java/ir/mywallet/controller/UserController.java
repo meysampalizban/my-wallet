@@ -2,10 +2,9 @@ package ir.mywallet.controller;
 
 import ir.mywallet.dto.Responses;
 import ir.mywallet.model.User;
-import ir.mywallet.services.JWTService;
-import ir.mywallet.services.OperationService;
 import ir.mywallet.services.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,24 +13,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200",
+		allowCredentials = "true", maxAge = 3000L, methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE},
+		allowedHeaders = {HttpHeaders.AUTHORIZATION,HttpHeaders.ACCEPT,HttpHeaders.CONTENT_TYPE,"userId"})
+
 @RequestMapping("/api/user")
 public class UserController {
 	
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 	
 	@Autowired
-	private OperationService operationService;
-	
-	@Autowired
-	private JWTService jwtService;
+	public UserController(UserService userService){
+		this.userService = userService;
+	}
 	
 	// گرفتن اطلاعات کاربر با ایدی
-	@GetMapping(path = "/getuser/{userId}")
+	@GetMapping(path = "/getuser/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public User getUser(@PathVariable("userId") int userId){
-		return userService.getUser(userId);
+	public User getUser(@NotNull @PathVariable("userId") int userId){
+		return userService.getUserById(userId);
 	}
 	
 	// ساخت کاربر

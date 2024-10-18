@@ -6,62 +6,63 @@ import ir.mywallet.model.Deposit;
 import ir.mywallet.model.Wallet;
 import ir.mywallet.repository.AccountRepo;
 import ir.mywallet.repository.DepositRepo;
-import ir.mywallet.repository.WalletRepo;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DepositService {
-	@Autowired
-	private DepositRepo depositRepo;
-	@Autowired
-	private AccountRepo accountRepo;
-	@Autowired
-	private WalletRepo walletRepo;
 	
-	public List<Deposit> getDepositByWalletId(int wallet_id){
-		
-		return depositRepo.findAllByWalletId(wallet_id);
+	private final DepositRepo depositRepo;
+	private final WalletService walletService;
+	private final AccountService accountService;
+	
+	@Autowired
+	public DepositService(DepositRepo depositRepo,AccountRepo accountRepo,WalletService walletService,AccountService accountService){
+		this.depositRepo = depositRepo;
+		this.walletService = walletService;
+		this.accountService = accountService;
+	}
+	
+	public List<Deposit> getDepositByWalletId(@NotNull int walletId){
+		return depositRepo.findAllByWalletId(walletId);
 	}
 	
 	@Transactional
-	public Responses depositToWallet(Wallet wallet,Long amount){
-		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		int id = wallet.getId();
+	public void depositToWallet(Wallet wallet,Long amount){
+		Wallet upWallet = new Wallet();
 		Long walletBalance = wallet.getWBalance();
 		Long finalBalance = walletBalance + amount;
-		walletRepo.updateBalance(id,finalBalance);
-		res.setStatusCode(200);
-		res.setTimestamp(new Date());
-		res.setStatusType("sueesss");
-		msg.put("success",new ArrayList<>(List.of("واریز با موفقیت انجام شد")));
-		res.setMessages(msg);
-		return res;
+		upWallet.setWBalance(finalBalance);
+		walletService.updateWallet(upWallet);
+	}
+	
+	
+	@Transactional
+	public void depositToAccount(Account account,Long amount){
+		Account upAccount = new Account();
+		Long walletBalance = account.getAccBalance();
+		Long finalBalance = walletBalance + amount;
+		upAccount.setAccBalance(finalBalance);
+		accountService.updateAccount(upAccount);
 	}
 	
 	@Transactional
 	public Deposit recordDeposit(Deposit deposit){
-		Deposit res = depositRepo.save(deposit);
-		return res;
+		return depositRepo.save(deposit);
 	}
 	
-	@Transactional
-	public Responses depositToAccount(Account account,Long amount){
+	private Responses successResponse(Map<String,List<Object>> msg){
 		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		int id = account.getId();
-		Long walletBalance = account.getAccBalance();
-		Long finalBalance = walletBalance + amount;
-		accountRepo.updateBalance(id,finalBalance);
 		res.setStatusCode(200);
-		res.setTimestamp(new Date());
-		res.setStatusType("sueesss");
-		msg.put("success",new ArrayList<>(List.of("واریز با موفقیت انجام شد")));
+		res.setStatusType("success");
 		res.setMessages(msg);
+		res.setTimestamp(new Date());
 		return res;
 	}
 	

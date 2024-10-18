@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class User {
 	
 	@NotBlank(message = "شماره تلفن باید وارد شود")
 	@Size(max = 11, message = "بیشترین طول شماره تلفن باید 11 باشد")
-	@Pattern(regexp = "^09[0-9]{10}$", message = "شماره تلفن را به طرز صحیح وارد کنید")
+	@Pattern(regexp = "^09[0-9]{9}$", message = "شماره تلفن را به طرز صحیح وارد کنید")
 	@Column(name = "phone_number", length = 14, unique = true, nullable = false)
 	private String phoneNumber;
 	
@@ -95,5 +96,8 @@ public class User {
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
+	
+	@Column(name = "token")
+	private String _token;
 	
 }
