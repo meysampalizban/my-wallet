@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../../service/server.service';
-import { Account } from '../../dto/account';
-import { User } from '../../dto/user';
+import { Account } from '../../dto/requests/account';
+import { User } from '../../dto/requests/user';
 import { CommonModule } from '@angular/common';
 import { SeparateDashPipe } from '../../pipes/separate-dash.pipe';
 import Swal from 'sweetalert2';
@@ -15,7 +15,6 @@ import { ComponentService } from '../../service/component.service';
   styleUrl: './accounts.component.css'
 })
 export class AccountsComponent implements OnInit {
-  accounts!: Account;
   userId !: number;
   userData: User | undefined;
   myAccounts: Account[] | undefined = [];
@@ -24,8 +23,13 @@ export class AccountsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.myAccounts = this.service.getMyAccounts(this.userId);
-    this.userData = this.service.getUserData(this.userId);
+    this.service.getMyAccounts(this.userId).subscribe((res) => {
+      this.myAccounts = res;
+    });
+
+    this.service.getUserData(this.userId).subscribe((res) => {
+      this.userData = res;
+    });
   }
 
 
@@ -33,29 +37,34 @@ export class AccountsComponent implements OnInit {
   createAccount() {
     let accNumber = Math.floor(Math.random() * (9999999999999 - 1000000000000)).toString();
     let shabaNumber = Math.floor(Math.random() * (9999999999999999 - 1000000000000000)).toString();
-    let balance = 50000;
+    let balance = 100000000;
 
-    this.accounts = {
+
+    let account: Account = {
       "accNumber": accNumber,
       "shabaNumber": shabaNumber,
       "accBalance": balance,
       "user": this.userData
     };
 
-    this.service.createAccount(this.accounts).subscribe(res => {
-      this.service.getMyAccounts(this.userId);
+
+    this.service.createAccount(account).subscribe(res => {
+
+      this.ngOnInit();
       Swal.fire({
         title: "موفق",
+        text: res.messages.success[0],
         icon: 'success',
         confirmButtonText: 'تمام'
       });
     });
   }
 
+
   deleteMyAccount(accId: number | undefined) {
     let id: number = accId == undefined ? 0 : accId;
     this.service.deleteMyAccount(id).subscribe(res => {
-      this.service.getMyAccounts(this.userId);
+      this.ngOnInit();
       Swal.fire({
         title: "موفق",
         icon: 'success',
@@ -64,4 +73,6 @@ export class AccountsComponent implements OnInit {
 
     })
   }
+
+
 }

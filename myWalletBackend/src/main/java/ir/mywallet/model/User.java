@@ -3,12 +3,13 @@ package ir.mywallet.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +17,9 @@ import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -63,9 +67,12 @@ public class User {
 	
 	
 	@Column(name = "birth_date", unique = false, nullable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	@DateTimeFormat(pattern = "yyyy-mm-dd")
-	private Date birthDate;
+	@NotNull(message = "تاریخ تولد را وارد کنید")
+	@JsonFormat(shape=JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate birthDate;
 	
 	
 	@Column(name = "sex", length = 10, nullable = true, unique = false)
@@ -92,10 +99,10 @@ public class User {
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@ReadOnlyProperty
-	private Date createdAt;
+	private Instant createdAt;
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+	private Instant updatedAt;
 	
 	@Column(name = "token")
 	private String _token;

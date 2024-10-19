@@ -1,102 +1,78 @@
 package ir.mywallet.services;
 
-import ir.mywallet.dto.Responses;
 import ir.mywallet.model.Account;
 import ir.mywallet.model.Wallet;
 import ir.mywallet.model.Withdrawal;
-import ir.mywallet.repository.AccountRepo;
-import ir.mywallet.repository.WalletRepo;
 import ir.mywallet.repository.WithdrawalRepo;
+import ir.mywallet.validation.ExceptionErrors;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class WithdrawalService {
-	@Autowired
-	private WithdrawalRepo withdrawalRepo;
-	@Autowired
-	private AccountRepo accountRepo;
-	@Autowired
-	private WalletRepo walletRepo;
+	private final WithdrawalRepo withdrawalRepo;
+	private final AccountService accountService;
+	private final WalletService walletService;
 	
-	public List<Withdrawal> getWithdrawalByWalletId(int wallet_id){
+	@Autowired
+	public WithdrawalService(WithdrawalRepo withdrawalRepo,AccountService accountService,WalletService walletService){
+		this.withdrawalRepo = withdrawalRepo;
+		this.accountService = accountService;
+		this.walletService = walletService;
+	}
+	
+	public List<Withdrawal> getWithdrawalByWalletId(@NotNull  int wallet_id){
 		return withdrawalRepo.findAllByWalletId(wallet_id);
 	}
 	
 	@Transactional
-	public Responses withdrawalFromAccount(Account account,Long amount){
-		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		int id = account.getId();
-		Long balance = account.getAccBalance();
-		
-		if(isCheckAccountBalance(balance,amount)){
-			Long finalBalance = balance - amount;
-			accountRepo.updateBalance(id,finalBalance);
-			res.setStatusCode(200);
-			res.setTimestamp(new Date());
-			res.setStatusType("success");
-			msg.put("success",new ArrayList<>(List.of("برداشت با موفقیت انجام شد")));
-			res.setMessages(msg);
-			return res;
-		}
-		res.setStatusCode(420);
-		res.setTimestamp(new Date());
-		res.setStatusType("error");
-		msg.put("error",new ArrayList<>(List.of("موجودی کافی نیست")));
-		res.setMessages(msg);
-		return res;
+	public void withdrawalFromAccount(Account account,long amount){
+		long balance = account.getAccBalance();
+		this.isCheckAccountBalance(balance,amount);
+		long finalBalance = balance - amount;
+		account.setAccBalance(finalBalance);
+		accountService.updateAccount(account);
 	}
 	
 	@Transactional
-	public Responses withdrawalFromWallet(Wallet wallet,Long amount){
-		Responses res = new Responses();
-		Map<String,List<Object>> msg = new HashMap<>();
-		int id = wallet.getId();
-		Long balance = wallet.getWBalance();
-		
-		if(isCheckWalletBalance(balance,amount)){
-			Long finalBalance = balance - amount;
-			walletRepo.updateBalance(id,finalBalance);
-			res.setStatusCode(200);
-			res.setTimestamp(new Date());
-			res.setStatusType("sueesss");
-			msg.put("success",new ArrayList<>(List.of("برداشت با موفقیت انجام شد")));
-			
-			res.setMessages(msg);
-			return res;
-		}
-		res.setStatusCode(420);
-		res.setTimestamp(new Date());
-		res.setStatusType("error");
-		msg.put("error",new ArrayList<>(List.of("موجودی کافی نیست")));
-		res.setMessages(msg);
-		return res;
+	public void withdrawalFromWallet(Wallet wallet,long amount){
+		long balance = wallet.getWBalance();
+		this.isCheckWalletBalance(balance,amount);
+		long finalBalance = balance - amount;
+		wallet.setWBalance(finalBalance);
+		walletService.updateWallet(wallet);
 	}
 	
 	
 	@Transactional
 	public Withdrawal recordWithdrawal(Withdrawal withdrawal){
-		Withdrawal res = withdrawalRepo.save(withdrawal);
-		return res;
+		return withdrawalRepo.save(withdrawal);
 	}
 	
-	private Boolean isCheckAccountBalance(Long balanceAccount,Long amount){
-		Long isCheckAmount = balanceAccount - amount;
-		if(isCheckAmount >= 50000){
-			return true;
+	private void isCheckAccountBalance(long balanceAccount,long amount) throws ExceptionErrors{
+		long isCheckAmount = balanceAccount - amount;
+		if(isCheckAmount <= 50000){
+			Map<String,List<Object>> msg = new HashMap<>();
+			msg.put("error",new ArrayList<>(List.of("موجودی کافی نیست")));
+			throw new ExceptionErrors(msg);
 		}
-		return false;
 	}
 	
-	private Boolean isCheckWalletBalance(Long balanceWallet,Long amount){
-		Long isCheckAmount = balanceWallet - amount;
-		if(isCheckAmount >= 0){
-			return true;
+	private void isCheckWalletBalance(long balanceWallet,long amount) throws ExceptionErrors{
+		long isCheckAmount = balanceWallet - amount;
+		if(isCheckAmount <= 0){
+			Map<String,List<Object>> msg = new HashMap<>();
+			msg.put("error",new ArrayList<>(List.of("موجودی کافی نیست")));
+			throw new ExceptionErrors(msg);
 		}
-		return false;
 	}
+	
+	
 }

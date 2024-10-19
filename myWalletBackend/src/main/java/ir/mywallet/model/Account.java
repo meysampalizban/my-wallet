@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -49,11 +50,11 @@ public class Account {
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@ReadOnlyProperty
-	private Date createdAt;
+	private Instant createdAt;
 	
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+	private Instant updatedAt;
 	
 	public Account(String accNumber,String shabaNumber,Long accBalance,User user){
 		this.accNumber = accNumber;

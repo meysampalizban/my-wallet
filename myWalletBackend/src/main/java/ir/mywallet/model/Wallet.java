@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -44,10 +45,10 @@ public class Wallet {
 	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private Instant createdAt;
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+	private Instant updatedAt;
 	
 	
 	

@@ -17,7 +17,6 @@ import lombok.Setter;
 public class TransferReq {
 	@Valid
 	private Wallet fromWallet;
-	@Valid
 	private Account toAccount;
 	@NotNull(message = "مقدار را وارد کنید")
 	private Long amount;

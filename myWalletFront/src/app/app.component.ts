@@ -1,5 +1,5 @@
 import { Component, inject, Input } from "@angular/core";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from '@angular/material/button';
 import { Title } from "@angular/platform-browser";
@@ -11,8 +11,8 @@ import { RegisterUserComponent } from "./register-user/register-user.component";
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
-export class AppComponent {
-  constructor(private title: Title) {
+export class AppComponent  {
+  constructor(private title: Title, protected router: Router) {
     title.setTitle("کبف پول من - صفحه اصلی");
   }
 

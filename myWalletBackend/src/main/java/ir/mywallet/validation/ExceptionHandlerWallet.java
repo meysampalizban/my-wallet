@@ -34,5 +34,16 @@ public class ExceptionHandlerWallet {
 		return new ResponseEntity<Responses>(res,new HttpHeaders(),HttpStatus.BAD_REQUEST);
 	}
 	
+	@ExceptionHandler(ExceptionErrors.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Responses> handleMethodArgumentNotValid(ExceptionErrors exception){
+		Responses res = new Responses();
+		res.setTimestamp(new Date());
+		res.setStatusType("error");
+		res.setStatusCode(400);
+		res.setMessages(exception.getMsg());
+		return new ResponseEntity<>(res,new HttpHeaders(),HttpStatus.BAD_REQUEST);
+	}
+	
 	
 }

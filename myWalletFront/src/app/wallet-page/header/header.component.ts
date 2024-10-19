@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ServerService } from '../../service/server.service';
-import { User } from '../../dto/user';
+import { User } from '../../dto/requests/user';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { ComponentService } from '../../service/component.service';
@@ -14,7 +14,7 @@ import { ComponentService } from '../../service/component.service';
 export class HeaderComponent {
   faBars = faBars;
   faUser = faUser;
-  public user: User | undefined;
+  public userData: User | undefined;
   private userId: number;
 
   constructor(private service: ServerService, private componentService: ComponentService) {
@@ -22,7 +22,9 @@ export class HeaderComponent {
   }
 
   ngOnInit(): void {
-    this.user = this.service.getUserData(this.userId);
+    this.service.getUserData(this.userId).subscribe((res) => {
+      this.userData = res;
+    });
   }
 
 }

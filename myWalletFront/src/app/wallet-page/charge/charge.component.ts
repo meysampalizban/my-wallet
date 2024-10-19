@@ -3,10 +3,10 @@ import { WalletPageComponent } from "../wallet-page.component";
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ServerService } from '../../service/server.service';
-import { Account } from '../../dto/account';
-import { Wallet } from '../../dto/wallet';
-import { Charge } from '../../dto/charge';
-import { User } from '../../dto/user';
+import { Account } from '../../dto/requests/account';
+import { Wallet } from '../../dto/requests/wallet';
+import { Charge } from '../../dto/requests/charge';
+import { User } from '../../dto/requests/user';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { ComponentService } from '../../service/component.service';
@@ -23,7 +23,7 @@ export class ChargeComponent implements OnInit {
   chargeForm !: FormGroup;
   listAccounts: Account[] | undefined = [];
   userId !: number;
-  userdata: User | undefined;
+  userData: User | undefined;
 
   constructor(
     private router: Router,
@@ -38,8 +38,12 @@ export class ChargeComponent implements OnInit {
   fromAccount = new FormControl();
 
   ngOnInit(): void {
-    this.listAccounts = this.service.getMyAccounts(this.userId);
-    this.userdata = this.service.getUserData(this.userId);
+    this.service.getMyAccounts(this.userId).subscribe((res) => {
+      this.listAccounts = res;
+    });
+    this.service.getUserData(this.userId).subscribe((res) => {
+      this.userData = res;
+    });
   }
 
 
@@ -48,7 +52,7 @@ export class ChargeComponent implements OnInit {
 
   chargeSubmit(): void {
     let fromAccount: Account = this.fromAccount.value;
-    let toWallet: Wallet | undefined = this.userdata?.wallet;
+    let toWallet: Wallet | undefined = this.userData?.wallet;
     let amount: number = this.amount.value;
     let description: string = this.description.value;
 

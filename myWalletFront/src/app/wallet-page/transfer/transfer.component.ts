@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletPageComponent } from "../wallet-page.component";
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Transfer } from '../../dto/transfer';
-import { Account } from '../../dto/account';
-import { Wallet } from '../../dto/wallet';
+import { Transfer } from '../../dto/requests/transfer';
+import { Account } from '../../dto/requests/account';
+import { Wallet } from '../../dto/requests/wallet';
 import { ServerService } from '../../service/server.service';
-import { User } from '../../dto/user';
+import { User } from '../../dto/requests/user';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ComponentService } from '../../service/component.service';
@@ -21,7 +21,7 @@ export class TransferComponent implements OnInit {
 
   transferForm !: FormGroup;
   userId !: number;
-  userdata: User | undefined;
+  userData: User | undefined;
   constructor(
     private service: ServerService,
     private router: Router,
@@ -33,8 +33,11 @@ export class TransferComponent implements OnInit {
   amount = new FormControl();
   description = new FormControl();
   toAccount = new FormControl();
+  
   ngOnInit(): void {
-    this.userdata = this.service.getUserData(this.userId);
+    this.service.getUserData(this.userId).subscribe((res) => {
+      this.userData = res;
+    });
   }
 
 
@@ -46,7 +49,7 @@ export class TransferComponent implements OnInit {
     let transfer: Transfer = {
       amount: this.amount.value,
       description: this.description.value,
-      fromWallet: this.userdata?.wallet,
+      fromWallet: this.userData?.wallet,
       toAccount: toAccount
     }
 

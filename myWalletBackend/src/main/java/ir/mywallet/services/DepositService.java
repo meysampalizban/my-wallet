@@ -34,22 +34,20 @@ public class DepositService {
 	}
 	
 	@Transactional
-	public void depositToWallet(Wallet wallet,Long amount){
-		Wallet upWallet = new Wallet();
-		Long walletBalance = wallet.getWBalance();
-		Long finalBalance = walletBalance + amount;
-		upWallet.setWBalance(finalBalance);
-		walletService.updateWallet(upWallet);
+	public void depositToWallet(Wallet wallet,long amount){
+		long walletBalance = wallet.getWBalance();
+		long finalBalance = walletBalance + amount;
+		wallet.setWBalance(finalBalance);
+		walletService.updateWallet(wallet);
 	}
 	
 	
 	@Transactional
-	public void depositToAccount(Account account,Long amount){
-		Account upAccount = new Account();
-		Long walletBalance = account.getAccBalance();
-		Long finalBalance = walletBalance + amount;
-		upAccount.setAccBalance(finalBalance);
-		accountService.updateAccount(upAccount);
+	public void depositToAccount(Account account,long amount){
+		long walletBalance = account.getAccBalance();
+		long finalBalance = walletBalance + amount;
+		account.setAccBalance(finalBalance);
+		accountService.updateAccount(account);
 	}
 	
 	@Transactional
@@ -57,14 +55,7 @@ public class DepositService {
 		return depositRepo.save(deposit);
 	}
 	
-	private Responses successResponse(Map<String,List<Object>> msg){
-		Responses res = new Responses();
-		res.setStatusCode(200);
-		res.setStatusType("success");
-		res.setMessages(msg);
-		res.setTimestamp(new Date());
-		return res;
-	}
+
 	
 	
 }

@@ -1,27 +1,38 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Register } from "../dto/register";
-import { Response } from "../dto/response";
+import { Injectable, OnInit } from "@angular/core";
+import { Register } from "../dto/requests/register";
+import { Response } from "../dto/responses/response";
 import { catchError, Observable, retry, throwError } from "rxjs";
-import { User } from "../dto/user";
-import { Account } from "../dto/account";
-import { Charge } from "../dto/charge";
-import { Deposit } from "../dto/deposit";
-import { Withdrawal } from "../dto/withdrawal";
-import { Transfer } from "../dto/transfer";
+import { User } from "../dto/requests/user";
+import { Account } from "../dto/requests/account";
+import { Charge } from "../dto/requests/charge";
+import { Deposit } from "../dto/requests/deposit";
+import { Withdrawal } from "../dto/requests/withdrawal";
+import { Transfer } from "../dto/requests/transfer";
+import { ComponentService } from "./component.service";
 
 @Injectable({
   providedIn: "root",
 })
-export class ServerService {
+export class ServerService implements OnInit {
   public URL: string = "http://localhost:8080/";
-  private headers = new HttpHeaders();
+  private headers;
 
-  constructor(private Http: HttpClient) {
-    this.headers.set("Accept", "application/json").set("Content-Type", "application/json");
+  constructor(private Http: HttpClient, private componentSrvice: ComponentService) {
+    this.headers = {
+      headers: new HttpHeaders({
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": this.componentSrvice.getUserToken(),
+        "userId": this.componentSrvice.getUserIdLocalStorage()
+      })
+    };
   }
 
-  private handleError(error: HttpErrorResponse) : Observable<Response>{
+  ngOnInit(): void {
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<Response> {
     let response: Response;
     if (error.status === 0) {
       console.error('An error occurred:', error.error);
@@ -36,38 +47,37 @@ export class ServerService {
     return throwError(() => response);
   }
 
-  public createUser(user: Register) {
+  public createUser(user: Register): Observable<Response> {
     let createUserUrl = this.URL + "api/user/createuser";
-    return this.Http.post<Response>(createUserUrl, user, { headers: this.headers }).pipe(retry(2),catchError(this.handleError.bind(this)));
+
+    const headers = {
+      headers: new HttpHeaders({
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      })
+    };
+    return this.Http.post<Response>(createUserUrl, user, headers).pipe(retry(2), catchError(this.handleError.bind(this)));
   }
 
 
   getDepositHistory(walletId: number) {
     let getDepositHistoryUrl = this.URL + "api/transaction/getdeposithistory/" + walletId;
-    return this.Http.get<Deposit[]>(getDepositHistoryUrl, { headers: this.headers });
+    return this.Http.get<Deposit[]>(getDepositHistoryUrl, this.headers);
   }
   getWithdrawalHistory(walletId: number) {
     let getWithdrawalHistory = this.URL + "api/transaction/getwithdrawalhistory/" + walletId;
-    return this.Http.get<Withdrawal[]>(getWithdrawalHistory, { headers: this.headers });
+    return this.Http.get<Withdrawal[]>(getWithdrawalHistory, this.headers);
   }
 
 
-  getMyAccounts(userId: number): Account[] | undefined {
+  getMyAccounts(userId: number) {
     let getMyAccountsUrl = this.URL + "api/account/getaccounts/" + userId;
-    let account: Account[] | undefined;
-    this.Http.get<Account[]>(getMyAccountsUrl, { headers: this.headers }).subscribe(res => {
-      account = res;
-    });
-    return account;
+    return this.Http.get<Account[]>(getMyAccountsUrl, this.headers);
   }
 
-  public getUserData(userId: number): User | undefined {
-    let user: User | undefined;
+  public getUserData(userId: number) {
     let getUser = this.URL + "api/user/getuser/" + userId;
-    this.Http.get<User>(getUser, { headers: this.headers }).subscribe(res => {
-      user = res;
-    });
-    return user;
+    return this.Http.get<User>(getUser, this.headers);
   }
 
 
@@ -75,24 +85,22 @@ export class ServerService {
 
   public createAccount(account: Account): Observable<Response> {
     let createAccountUrl = this.URL + "api/account/createaccount";
-    return this.Http.post<Response>(createAccountUrl, account, { headers: this.headers });
+    return this.Http.post<Response>(createAccountUrl, account, this.headers);
   }
 
   public deleteMyAccount(accId: number): Observable<Response> {
     let deleteMyaccount = this.URL + "api/account/deleteaccount/" + accId;
-    return this.Http.delete<Response>(deleteMyaccount, { headers: this.headers });
+    return this.Http.delete<Response>(deleteMyaccount, this.headers);
   }
 
   public chargeWallet(charge: Charge): Observable<Response> {
-    console.log(charge);
     let chargeUrl = this.URL + "api/transaction/chargewallet";
-    return this.Http.post<Response>(chargeUrl, charge, { headers: this.headers });
+    return this.Http.post<Response>(chargeUrl, charge, this.headers);
   }
 
   public withdrawalWallet(transfer: Transfer): Observable<Response> {
-    console.log(transfer);
     let withdrawalUrl = this.URL + "api/transaction/transferfromwallet";
-    return this.Http.post<Response>(withdrawalUrl, transfer, { headers: this.headers });
+    return this.Http.post<Response>(withdrawalUrl, transfer, this.headers);
   }
 
 }

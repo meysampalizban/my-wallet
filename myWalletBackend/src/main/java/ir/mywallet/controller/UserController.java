@@ -27,10 +27,11 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	
 	// گرفتن اطلاعات کاربر با ایدی
 	@GetMapping(path = "/getuser/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public User getUser(@NotNull @PathVariable("userId") int userId){
+	public User getUser(@NotNull @PathVariable("userId") int userId)
+	{
 		return userService.getUserById(userId);
 	}
 	

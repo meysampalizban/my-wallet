@@ -11,7 +11,7 @@
             <div
                 class="w-full  bg-white border  iransans text-lg leading-3 my-2 py-2 px-0  text-center border-gray-300 rounded-lg  shadow-lg dark:bg-gray-800 dark:border-gray-700  justify-center items-center ">
                 <p>موجودی کیف پول من <fa-icon  class="text-xl text-gray-400" [icon]="faWallet"></fa-icon></p><br>
-                <p class="iransansnum leading-4 my-4" dir="ltr">{{ user?.wallet?.wbalance| number:'0.0-3' }} <br> ریال
+                <p class="iransansnum leading-4 my-4" dir="ltr">{{ userData?.wallet?.wbalance| number:'0.0-3' }} <br> ریال
                 </p>
                 <button type="button" routerLink="/charge"
                     class="text-white bg-gradient-to-r w-32 leading-4 from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-xl  px-5 py-2.5 text-center me-2 mb-2">
@@ -31,3 +31,4 @@
 
     </div>
 </div>
+<router-outlet></router-outlet>

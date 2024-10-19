@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.Date;
 
 // جدول برداشت ها
@@ -47,7 +48,7 @@ public class Withdrawal {
 	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private Instant createdAt;
 	
 	
 	public Withdrawal(Long withdrawalAmount,Wallet wallet,String refNumber,String desciption){

@@ -24,6 +24,22 @@ public class AccountService {
 		this.accountRepo = accountRepo;
 	}
 	
+	public Account getAccountByAccountNumber(String accountNumber){
+		Map<String,List<Object>> msg = new HashMap<>();
+		msg.put("account",Arrays.asList("حساب کاربری یافت نشد"));
+		Account account = accountRepo.findAccountByAccNumber(accountNumber);
+		if(account == null){
+			throw new ExceptionErrors(msg);
+		}
+		return account;
+	}
+	
+	public Account getAccount(Account account){
+		Map<String,List<Object>> msg = new HashMap<>();
+		msg.put("account",Arrays.asList("حساب کاربری یافت نشد"));
+		return accountRepo.findById(account.getId()).orElseThrow(() -> new ExceptionErrors(msg));
+	}
+	
 	public List<Account> getAccounts(@NotNull int userId){
 		return accountRepo.getAllByUserId(userId);
 	}

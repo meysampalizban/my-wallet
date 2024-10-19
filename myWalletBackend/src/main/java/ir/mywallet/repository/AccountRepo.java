@@ -14,6 +14,7 @@ import java.util.List;
 public interface AccountRepo extends CrudRepository<Account,Integer>, JpaRepository<Account,Integer> {
 	
 	Boolean existsByAccNumber(String accNumber);
+	
 	Boolean existsByShabaNumber(String shabaNumber);
 	
 	@Modifying
@@ -23,6 +24,5 @@ public interface AccountRepo extends CrudRepository<Account,Integer>, JpaReposit
 	@Query(value = "SELECT * FROM users_accounts  WHERE user_id=:userId", nativeQuery = true)
 	List<Account> getAllByUserId(@Param(value = "userId") int id);
 	
-	@Query(value = "SELECT * FROM users_accounts  WHERE account_number=:accountNumber", nativeQuery = true)
-	Account findByaccountNumber(@Param(value = "accountNumber") String accNum);
+	Account findAccountByAccNumber(String accNum);
 }

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.Date;
 
 //جدول واریزی ها
@@ -44,7 +45,7 @@ public class Deposit {
 	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private Instant createdAt;
 	
 	public Deposit(Long depositAmount,Wallet wallet,String refNumber,String desciption){
 		this.depositAmount = depositAmount;

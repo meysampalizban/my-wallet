@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200",
 		allowCredentials = "true", maxAge = 3000L, methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE},
 		allowedHeaders = {HttpHeaders.AUTHORIZATION,HttpHeaders.ACCEPT,HttpHeaders.CONTENT_TYPE,"userId"})
+
 @RequestMapping("/api/account")
 public class AccountController {
 	
@@ -32,6 +32,7 @@ public class AccountController {
 	
 	// برای گرفتن اطلاعات حساب های یک کاربر با ایدی کاربر
 	@GetMapping(path = "/getaccounts/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	
 	public List<Account> getAllAccount(@NotNull @PathVariable("userId") int userId){
 		return accountService.getAccounts(userId);
 	}

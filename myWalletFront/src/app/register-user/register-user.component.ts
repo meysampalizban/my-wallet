@@ -12,7 +12,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faAt } from "@fortawesome/free-solid-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
 import { CommonModule } from "@angular/common";
-import { Register } from "../dto/register";
+import { Register } from "../dto/requests/register";
 import { SweetAlert2LoaderService, SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
@@ -70,7 +70,7 @@ export class RegisterUserComponent implements OnInit {
 
   email = new FormControl("", [Validators.required, Validators.email, Validators.maxLength(90)]);
 
-  phoneNumber = new FormControl("", [Validators.required, Validators.pattern("^09[0-9]{10}$")]);
+  phoneNumber = new FormControl("", [Validators.required, Validators.pattern("^09[0-9]{9}$")]);
 
   nationalCode = new FormControl("", [Validators.required, Validators.pattern("^[0-9]{10}$")]);
 
@@ -82,7 +82,7 @@ export class RegisterUserComponent implements OnInit {
 
   sex = new FormControl("", [Validators.required]);
 
-  militaryStatus = new FormControl("");
+  militaryStatus = new FormControl("none");
 
   ngOnInit(): void {
     this.registerForm = this.form.group({
@@ -105,7 +105,7 @@ export class RegisterUserComponent implements OnInit {
     let year = value.get('year').value;
     let month = value.get('month').value;
     let day = value.get('day').value;
-    // birthDate = year + '-' + month + '-' + day;
+    birthDate = year + '-' + month + '-' + day;
 
     let register: Register = {
       "firstName": value.get("firstName").value,
@@ -118,65 +118,54 @@ export class RegisterUserComponent implements OnInit {
       "militaryStatus": value.get("militaryStatus").value
     };
 
-
     this.service.createUser(register).subscribe({
-      next: (res) => { res }, error:(err) => {
-      let s: Array<any> = Object.entries(err.messages).map(([key, data]) => {
-        return data;
-      });
-      
-      let t: string = "";
-      s.map((e) => {
-        t += e + ".";
-      })
+      next: (res) => {
 
-      Swal.fire({
-        title: "ناموفق",
-        text: t,
-        icon: 'error',
-        confirmButtonText: 'تمام'
-      });
+        localStorage.setItem("_token", res.messages._token.toString());
+        localStorage.setItem("userId", res.messages.userId.toString());
 
+        let text: string = "";
+        Object.entries(res.messages.success).forEach((msg) => {
+          text = msg.toString();
+        })
 
-    }});
-
-  
+        Swal.fire({
+          title: "موفق",
+          text: text,
+          icon: 'success',
+          confirmButtonText: 'تمام'
+        });
 
 
-    //   this.service.createUser(register).subscribe((res) => {
-    //     if (res.statusCode == 201) {
-    //       Swal.fire({
-    //         title: "موفق",
+      }, error: (err) => {
+        let s: Array<any> = Object.entries(err.messages).map(([key, data]) => {
+          return data;
+        });
 
-    //         icon: 'success',
-    //         confirmButtonText: 'تمام'
-    //       });
-    //       // localStorage.setItem("userId", res.messages);
-    //       this.router.navigate(["/wallet"]);
-    //     }
-    //     if (res.statusCode == 400) {
-    //       Swal.fire({
-    //         title: "ناموفق",
+        let t: string = "";
+        s.map((e) => {
+          t += e + ".";
+        })
 
-    //         icon: 'error',
-    //         confirmButtonText: 'تمام'
-    //       });
+        Swal.fire({
+          title: "ناموفق",
+          text: t,
+          icon: 'error',
+          confirmButtonText: 'تمام'
+        });
+      }
+    });
 
-    //     }
-    //   }, (err) => {
-    //     console.log(err);
+  // }
+}
 
-    //   });
-    //   // }
+ChangeSex(event: any) {
+  if (event.target.value == "man") {
+    this.sexOption = true;
   }
-
-  ChangeSex(event: any) {
-    if (event.target.value == "man") {
-      this.sexOption = true;
-    }
-    if (event.target.value == "woman") {
-      this.sexOption = false;
-    }
+  if (event.target.value == "woman") {
+    this.sexOption = false;
   }
+}
 }
 

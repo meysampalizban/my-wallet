@@ -7,12 +7,7 @@ import ir.mywallet.model.Account;
 import ir.mywallet.model.Deposit;
 import ir.mywallet.model.Wallet;
 import ir.mywallet.model.Withdrawal;
-import ir.mywallet.repository.AccountRepo;
-import ir.mywallet.repository.WalletRepo;
-import ir.mywallet.validation.ExceptionErrors;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,69 +17,59 @@ import java.util.*;
 @Service
 
 public class OperationService {
-	private final Logger LOG = LoggerFactory.getLogger(OperationService.class);
 	
 	private final WithdrawalService withdrawalService;
 	private final DepositService depositService;
-	private final AccountRepo accountRepo;
-	private final WalletRepo walletRepo;
+	private final AccountService accountService;
+	private final WalletService walletService;
 	
 	@Autowired
-	public OperationService(WithdrawalService withdrawalService,DepositService depositService,AccountRepo accountRepo,WalletRepo walletRepo){
+	public OperationService(WithdrawalService withdrawalService,DepositService depositService,AccountService accountService,WalletService walletService){
 		this.withdrawalService = withdrawalService;
 		this.depositService = depositService;
-		this.accountRepo = accountRepo;
-		this.walletRepo = walletRepo;
+		this.accountService = accountService;
+		this.walletService = walletService;
 	}
 	
 	
 	@Transactional
 	public Responses operationCharge(ChargeReq req){
+		long amount = req.getAmount();
+		Account fromAccount = this.accountService.getAccount(req.getFromAccount());
 		
-		Map<String,List<Object>> msg = new HashMap<>();
-		boolean checkIsExistsAccount = accountRepo.findById(req.getFromAccount().getId()).isPresent();
-		if(!checkIsExistsAccount){
-			msg.put("error",new ArrayList<>(List.of(" حساب کاربر یافت نشد")));
-			throw new ExceptionErrors(msg);
-		}
-		Account fromAccount = accountRepo.findById(req.getFromAccount().getId()).get();
-		
-		Wallet toWallet = walletRepo.findById(req.getToWallet().getId()).get();
+		Wallet toWallet = this.walletService.getWallet(req.getToWallet());
 		
 		String refNumber = this.createRefNumber(fromAccount.getAccNumber());
 		
-		withdrawalService.withdrawalFromAccount(fromAccount,req.getAmount());
-		depositService.depositToWallet(toWallet,req.getAmount());
+		withdrawalService.withdrawalFromAccount(fromAccount,amount);
 		
-		Deposit deposit = new Deposit(req.getAmount(),toWallet,refNumber,req.getDescription());
+		depositService.depositToWallet(toWallet,amount);
+		
+		Deposit deposit = new Deposit(amount,toWallet,refNumber,req.getDescription());
 		depositService.recordDeposit(deposit);
 		
-		
+		Map<String,List<Object>> msg = new HashMap<>();
 		msg.put("success",new ArrayList<>(List.of("با موفقیت کیف پول شما شارژ شد")));
 		return this.successResponse(msg);
 	}
 	
 	
 	@Transactional
-	public Responses operationTransfer(TransferReq req) throws ExceptionErrors{
-		Map<String,List<Object>> msg = new HashMap<>();
-		boolean checkIsExistsWallet = walletRepo.findById(req.getFromWallet().getId()).isPresent();
-		if(!checkIsExistsWallet){
-			msg.put("error",new ArrayList<>(List.of("کبف پول یافت نشد")));
-			throw new ExceptionErrors(msg);
-		}
-		Wallet fromWallet = walletRepo.findById(req.getFromWallet().getId()).get();
+	public Responses operationTransfer(TransferReq req){
+		long amount = req.getAmount();
+		Wallet fromWallet = this.walletService.getWallet(req.getFromWallet());
 		
-		Account toAccount = accountRepo.findByaccountNumber(req.getToAccount().getAccNumber());
+		Account toAccount = this.accountService.getAccountByAccountNumber(req.getToAccount().getAccNumber());
 		
 		String refNumber = this.createRefNumber(toAccount.getAccNumber());
 		
-		withdrawalService.withdrawalFromWallet(fromWallet,req.getAmount();
-		depositService.depositToAccount(toAccount,req.getAmount();
+		withdrawalService.withdrawalFromWallet(fromWallet,amount);
+		depositService.depositToAccount(toAccount,amount);
 		
-		Withdrawal withdrawal = new Withdrawal(req.getAmount(),fromWallet,refNumber,req.getDescription());
+		Withdrawal withdrawal = new Withdrawal(amount,fromWallet,refNumber,req.getDescription());
 		withdrawalService.recordWithdrawal(withdrawal);
 		
+		Map<String,List<Object>> msg = new HashMap<>();
 		msg.put("success",new ArrayList<>(List.of("انتقال از کیف پول با موفقیت انجام شد")));
 		return this.successResponse(msg);
 	}
@@ -92,8 +77,9 @@ public class OperationService {
 	private String createRefNumber(String accountNumber){
 		Instant instant = Instant.now();
 		long i = instant.toEpochMilli();
-		Long refNumber = (Long) Long.valueOf(accountNumber + i);
-		return refNumber.toString();
+		long acc = Long.valueOf(accountNumber);
+		long refNumber = i + acc;
+		return String.valueOf(refNumber);
 	}
 	
 	private Responses successResponse(Map<String,List<Object>> msg){

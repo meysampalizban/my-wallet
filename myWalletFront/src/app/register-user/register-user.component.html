@@ -148,7 +148,9 @@
                   <select id="month" [formControl]="month"
                     class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option disabled selected value="">هیچکدام</option>
-                    <option *ngFor="let month of monthCount; let i= index " value="{{ i+1 }}">{{ month }}</option>
+                    <option *ngFor="let month of monthCount; let i = index "
+                      value="{{ (i+1) == 10 || (i +1 )==11 || (i+1) == 12 ? (i+1) : '0'+ (i+1) }}">{{ month
+                      }}</option>
                   </select>
                   <div *ngIf="month.invalid && (month?.touched || month?.dirty)">
                     <small class="text-red-600" *ngIf="month?.errors?.['required']">
@@ -166,7 +168,8 @@
                   <select id="day" [formControl]="day"
                     class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option disabled selected value="">هیچکدام</option>
-                    <option *ngFor="let day of dayCount" value="{{ day }}">{{ day }}</option>
+                    <option *ngFor="let day of dayCount; let i = index;" value="{{ (i+1) < 10 ? '0'+day : day }}">{{ day
+                      }}</option>
                   </select>
                   <div *ngIf="day.invalid && (day?.touched || day?.dirty)">
                     <small class="text-red-600" *ngIf="day?.errors?.['required']">
@@ -206,7 +209,7 @@
               </label>
               <select id="militaryStatus" required [formControl]="militaryStatus"
                 class="bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option disabled selected value="">هیچکدام</option>
+                <option disabled selected value="none">هیچکدام</option>
                 <option value="hasEndMilitaryCard">کارت پایان خدمت</option>
                 <option value="hasTempMilitary">معافیت موقت </option>
                 <option value="hasPermanentMilitray">معافیت دائم </option>
